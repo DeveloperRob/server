@@ -125,6 +125,8 @@ extern char		*xtrabackup_stream_str;
 extern long		xtrabackup_throttle;
 extern longlong		xtrabackup_use_memory;
 
+extern ulong		xtrabackup_innodb_force_recovery;
+
 extern my_bool		opt_galera_info;
 extern my_bool		opt_slave_info;
 extern my_bool		opt_no_lock;

@@ -132,6 +132,7 @@ char *ibx_xtrabackup_tables_file;
 long ibx_xtrabackup_throttle;
 char *ibx_opt_mysql_tmpdir;
 longlong ibx_xtrabackup_use_memory;
+ulong ibx_xtrabackup_innodb_force_recovery;
 
 
 static inline int ibx_msg(const char *fmt, ...) ATTRIBUTE_FORMAT(printf, 1, 2);
@@ -201,6 +202,7 @@ enum innobackupex_options
 	OPT_INCREMENTAL_BASEDIR,
 	OPT_INCREMENTAL_DIR,
 	OPT_INCREMENTAL_FORCE_SCAN,
+	OPT_INNODB_FORCE_RECOVERY,
 	OPT_LOG_COPY_INTERVAL,
 	OPT_PARALLEL,
 	OPT_REBUILD_INDEXES,
@@ -557,6 +559,13 @@ static struct my_option ibx_long_options[] =
 	 (uchar*)&ibx_xtrabackup_incremental_force_scan,
 	 (uchar*)&ibx_xtrabackup_incremental_force_scan, 0, GET_BOOL, NO_ARG,
 	 0, 0, 0, 0, 0, 0},
+
+	{"innodb-force-recovery", OPT_INNODB_FORCE_RECOVERY,
+	 "(for --apply-log): Crash recovery mode (ignores page "
+	 "corruption; for emergencies only).",
+	 (uchar*)&ibx_xtrabackup_innodb_force_recovery,
+	 (uchar*)&ibx_xtrabackup_innodb_force_recovery,
+	 0, GET_ULONG, OPT_ARG, 0, 0, SRV_FORCE_IGNORE_CORRUPT, 0, 0, 0},
 
 	{"log-copy-interval", OPT_LOG_COPY_INTERVAL, "This option specifies "
 	 "time interval between checks done by log copying thread in "
@@ -918,6 +927,8 @@ ibx_init()
 	xtrabackup_throttle = ibx_xtrabackup_throttle;
 	opt_mysql_tmpdir = ibx_opt_mysql_tmpdir;
 	xtrabackup_use_memory = ibx_xtrabackup_use_memory;
+	xtrabackup_innodb_force_recovery =
+					ibx_xtrabackup_innodb_force_recovery;
 
 	if (!opt_ibx_incremental
 	    && (xtrabackup_incremental
